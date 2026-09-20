@@ -1,0 +1,7 @@
+pandas
+numpy
+matplotlib
+hijridate
+openpyxl
+python-pptx
+notebook
