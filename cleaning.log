@@ -1,0 +1,77 @@
+Raw data: 33,210 rows, 8 columns
+
+[Step 1] Convert AREA and METER_PRICE to numbers
+    AREA: 0 non-numeric values set to empty
+    METER_PRICE: 0 non-numeric values set to empty
+    effect on raw data: mean price 1,365,637,396,442.06 | median price 1,517.07 | total value 112,982,865,649,281,073,152
+
+[Step 2] Drop rows identical in every column (exact duplicates)
+    rows: 33,210 -> 32,237  (removed 973, 2.93%)
+    effect: mean price 1,402,267,137,813.60 | median price 1,563.48 | total value 112,982,865,648,727,965,696
+
+[Step 3] Remove square brackets, extra spaces and empty strings from text columns
+    RS_CITY_NAME: 0 values with square brackets; 0 values with extra / padded spaces
+    NEIGHBORHOOD_NAME: 0 values with square brackets; 0 values with extra / padded spaces
+    RS_TYPE: 0 values with square brackets; 0 values with extra / padded spaces
+    new_use: 0 values with square brackets; 0 values with extra / padded spaces
+    (no rows removed)
+
+[Step 4] Set 'no value' placeholders and purely numeric codes to missing
+    RS_CITY_NAME: 0 'no value' placeholders; 0 purely numeric values
+    NEIGHBORHOOD_NAME: 758 'no value' placeholders; 5 purely numeric values
+    RS_TYPE: 264 'no value' placeholders; 3 purely numeric values
+    new_use: 0 'no value' placeholders; 2 purely numeric values
+    (no rows removed)
+
+[Step 5] Unify Arabic spelling variants (hamza, ta marbuta / ha, alef maqsura / ya) to the most frequent spelling
+    RS_CITY_NAME: 0 names with more than one spelling; 0 values rewritten to the main spelling
+    NEIGHBORHOOD_NAME: 4 names with more than one spelling; 29 values rewritten to the main spelling
+    RS_TYPE: 1 names with more than one spelling; 10 values rewritten to the main spelling
+    new_use: 0 names with more than one spelling; 0 values rewritten to the main spelling
+    (no rows removed)
+
+[Step 6] Drop exact duplicates that only appeared after the text clean-up
+    rows: 32,237 -> 32,237  (removed 0, 0.00%)
+    effect: mean price 1,402,267,137,813.60 | median price 1,563.48 | total value 112,982,865,648,727,965,696
+
+[Step 7] Check SERIAL duplicates (reported only, nothing removed)
+    rows sharing a SERIAL with another row: 19,359 (6,117 distinct SERIALs)
+    rows with a missing SERIAL: 1
+    rows identical in everything except SERIAL: 1,655 extra copies
+    Kept on purpose: a deed can cover several properties and there is no deed identifier,
+    so these rows may be genuine separate records. Recorded as an open question.
+
+[Step 8] Convert Hijri deed date to Gregorian; drop rows with a missing or invalid date
+    missing date text: 593; present but not a valid Hijri date: 0
+    rows: 32,237 -> 31,644  (removed 593, 1.84%)
+    effect: mean price 1,428,834,236,874.31 | median price 1,563.37 | total value 112,982,865,648,241,836,032
+    Gregorian range kept: 2020-01-01 to 2020-12-31
+
+[Step 9] Drop rows with a missing, zero or negative METER_PRICE or AREA
+    bad price: 399; bad area: 185; both: 4
+    rows: 31,644 -> 31,064  (removed 580, 1.83%)
+    effect: mean price 1,437,251,590,240.92 | median price 1,566.01 | total value 112,982,865,648,241,901,568
+
+[Step 10] Detect and remove outliers in METER_PRICE and AREA (log10 scale, 3 x IQR beyond the middle 50%)
+    METER_PRICE kept range: 1.35 to 1,207,445.35 SAR per m2
+    AREA kept range: 6.07 to 33,676.85 m2
+    outside price range: 92; outside area range: 30; both: 1
+    rows: 31,064 -> 30,943  (removed 121, 0.39%)
+    effect: mean price 2,129.51 | median price 1,587.30 | total value 27,917,761,345
+
+[Step 11] Add derived columns: value = AREA x METER_PRICE (SAR) and quarter (e.g. 2020Q1)
+
+======================================================================
+Final data: 30,943 rows kept of 33,210 (93.2%)
+    mean price 2,129.51 | median price 1,587.30 | total value 27,917,761,345
+    Missing values left in text columns (kept, not removed):
+        RS_CITY_NAME: 5
+        NEIGHBORHOOD_NAME: 958
+        RS_TYPE: 943
+        new_use: 2
+    Rows per quarter:
+        2020Q1: 8,881
+        2020Q2: 6,066
+        2020Q3: 7,715
+        2020Q4: 8,281
+Saved cleansed_data.csv
